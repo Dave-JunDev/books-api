@@ -1,6 +1,20 @@
+using Context;
+using Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Services;
+using Utils;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<PostgresContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
+});
+
+
 // Add services to the container.
+builder.Services.AddScoped<IPaginationUtil, PaginationUtil>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
