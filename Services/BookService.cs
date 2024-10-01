@@ -2,6 +2,7 @@ using Context;
 using Model;
 using Microsoft.EntityFrameworkCore;
 using Interfaces;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Services;
 
@@ -24,6 +25,11 @@ public class BookService : IBookService
             return new();
 
         return book;
+    }
+
+    public async Task<List<Book>> GetAllBooksByIds(List<int> ids)
+    {
+        return await _context.Books.Where(b => ids.Contains(b.Id)).ToListAsync();
     }
 
     public async Task<Book> CreateBook(Book book)

@@ -1,6 +1,7 @@
 using Context;
 using Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Model;
 using Services;
 using Utils;
 
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<PostgresContext>(options =>
 // Add services to the container.
 builder.Services.AddScoped<IPaginationUtil, PaginationUtil>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddKeyedScoped<ICommonService<User>, UserService>("UserService");
+builder.Services.AddKeyedScoped<ICommonService<BorrowedBooks>, BorrowedBooksService>("BorrowedBooksService");
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
