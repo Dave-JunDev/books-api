@@ -3,15 +3,18 @@ using Context;
 using Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Model;
+using System.Text.Json;
 
 namespace Services;
 
 public class BorrowedBooksService : ICommonService<BorrowedBooks>
 {
     private readonly PostgresContext _context;
-    public BorrowedBooksService(PostgresContext context)
+    private readonly ILogger<BorrowedBooksService> _logger;
+    public BorrowedBooksService(PostgresContext context, ILogger<BorrowedBooksService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<BorrowedBooks> CreateAsync(BorrowedBooks entity)
@@ -29,7 +32,11 @@ public class BorrowedBooksService : ICommonService<BorrowedBooks>
     }
 
     public async Task<List<BorrowedBooks>> GetAllAsync() 
-        => await _context.BorrowedBooks.ToListAsync();
+    {
+        List<BorrowedBooks> borrowedBooks = await _context.BorrowedBooks.ToListAsync();
+
+        return borrowedBooks;
+    }
 
     public async Task<BorrowedBooks> GetByIdAsync(int id)
     {

@@ -1,4 +1,5 @@
 
+using System.Text.Json;
 using DTO;
 using Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,20 @@ public class BorrowedBooksController : ControllerBase
     private readonly ICommonService<User> _userService;
     private readonly IBookService _bookService;
     private readonly IPaginationUtil _paginationUtil;
-
+    private readonly ILogger<BorrowedBooksController> _logger;
     public BorrowedBooksController(
         [FromKeyedServices("BorrowedBooksService")] ICommonService<BorrowedBooks> borrowedBooksService,
         [FromKeyedServices("UserService")] ICommonService<User> userService,
         IBookService bookService,
-        IPaginationUtil paginationUtil
+        IPaginationUtil paginationUtil, 
+        ILogger<BorrowedBooksController> logger
     )
     {
         _borrowedBooksService = borrowedBooksService;
         _userService = userService;
         _bookService = bookService;
         _paginationUtil = paginationUtil;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -36,6 +39,12 @@ public class BorrowedBooksController : ControllerBase
         if (borrowedBooks.Count == 0)
             return NotFound();
 
+        List<Book> books = await _bookService.GetAllBooksAsync();
+        foreach (BorrowedBooks borrowedBook in borrowedBooks)
+        {
+            borrowedBook.Books = books.Where(b => borrowedBook.Books!.Contains(b)).ToList();
+            borrowedBook.User = await _userService.GetByIdAsync(borrowedBook.UserId);
+        }
         var result = _paginationUtil.GetPagination(borrowedBooks, page, recordsPerPage);
 
         return Ok(result);

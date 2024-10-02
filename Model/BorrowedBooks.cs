@@ -16,4 +16,6 @@ public class BorrowedBooks
     public DateTime DateBorrowed { get; set; } = DateTime.Now;
     [Column("return_date")]
     public DateTime? ReturnDate { get; set; }
+    [Column("UserId")]
+    public virtual int UserId { get; set; }
 }
